@@ -4,16 +4,22 @@ import BurgerIngredient from "./BurgerIngredient/BurgerIngredient";
 
 const burger = props => {
 
-    const transfromIngredients = Object.keys(props.ingredients).map(ingredientKey => {
-        return [...Array(props.ingredients[ingredientKey])].map((el, index) => {
-            return <BurgerIngredient type={ingredientKey} key={ingredientKey + '_' + index} />;
-        })
-    });
+    let transformIngredients = [];
+    for(let ingredient in props.ingredients){
+        if (props.ingredients.hasOwnProperty(ingredient)) {
+            for (let ingredientVal = 0; ingredientVal < props.ingredients[ingredient]; ingredientVal++) {
+                transformIngredients.push(<BurgerIngredient type={ingredient} key={ingredient + ingredientVal}/>);
+            }
+        }
+    }
 
+    if(transformIngredients.length === 0){
+        transformIngredients = <p> Please start adding ingredients </p>;
+    }
     return (
         <div className={classes.Burger}>
             <BurgerIngredient type={'bread-top'} />
-            {transfromIngredients}
+            {transformIngredients}
             <BurgerIngredient type={'bread-bottom'} />
         </div>
     );
