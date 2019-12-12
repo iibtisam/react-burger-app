@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {Component} from 'react';
+import Layout from './components/Layout/Layout';
 
-function App() {
-    return (
-        <div>
-        </div>
-    );
+class App extends Component {
+    render() {
+        return (
+            <div>
+                <Layout>
+                    <p>
+                        Test Layout
+                    </p>
+                </Layout>
+            </div>
+        );
+    }
 }
 
 export default App;
