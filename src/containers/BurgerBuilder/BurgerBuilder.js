@@ -19,20 +19,23 @@ class BurgerBuilder extends Component {
             cheese: 0,
             meat: 0
         },
-        totalPrice: 0
+        totalPrice: 0,
+        purchasable: false
     };
 
     addIngredientHandler = (type) => {
         const updatedIngredients = {
             ...this.state.ingredients
         };
-        updatedIngredients[type] = this.state.ingredients[type] + 1;;
+        updatedIngredients[type] = this.state.ingredients[type] + 1;
+        ;
         const updatedPrice = this.state.totalPrice + INTEGRENT_PRICES[type];
 
         this.setState({
             ingredients: updatedIngredients,
             totalPrice: updatedPrice
-        })
+        });
+        this.updatePurchaseState(updatedIngredients);
     };
 
     removeIngredientHandler = (type) => {
@@ -45,16 +48,30 @@ class BurgerBuilder extends Component {
         this.setState({
             ingredients: updatedIngredients,
             totalPrice: updatedPrice
-        })
+        });
+        this.updatePurchaseState(updatedIngredients);
     };
 
-
+    updatePurchaseState = (ingredients) => {
+        let purchasable = false;
+        for (let key in ingredients) {
+            if (ingredients.hasOwnProperty(key)) {
+                if (ingredients[key] > 0) {
+                    purchasable = true;
+                    break;
+                }
+            }
+        }
+        this.setState({
+            purchasable: purchasable
+        })
+    };
 
     render() {
         const disabledInfo = {
             ...this.state.ingredients
         };
-        for(let key in disabledInfo){
+        for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] === 0;
         }
 
@@ -66,6 +83,7 @@ class BurgerBuilder extends Component {
                     ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabledInfo}
                     price={this.state.totalPrice}
+                    purchasable={this.state.purchasable}
                 />
             </Aux>
         );
