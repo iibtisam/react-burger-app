@@ -11,7 +11,7 @@ const controls = [
 
 const buildControls = props => (
     <div className={classes.BuildControls}>
-        <p> Current Price <strong>{Math.round(props.price * 100)/100 } </strong></p>
+        <p> Current Price <strong>{props.price.toFixed(2) } </strong></p>
         {controls.map(ctrl => {
             return <BuildControl
                 key={ctrl.label}
