@@ -80,37 +80,49 @@ class BurgerBuilder extends Component {
     };
 
     purchaseContinueHandler = () => {
-        this.setState({
-            loading: true
+        const queryParams = [];
+        for(let index in this.state.ingredients){
+            queryParams.push(encodeURIComponent(index) + '=' + encodeURIComponent(this.state.ingredients[index]))
+        }
+
+        queryParams.push('price='+this.state.totalPrice.toFixed(2));
+        const queryString = '?'+ queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: queryString
+
         });
-
-        const data = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Ibtisam ul Haq',
-                address: {
-                    street: 2,
-                    house_no: 111,
-                    block: 'B',
-                    society: 'NFC'
-                },
-                email: 'iibtisam@gmail.com',
-            },
-            deliveryMethod: 'fastest'
-        };
-
-        axios.post('/orders.json', data).then(response => {
+        // this.setState({
+        //     loading: true
+        // });
+        //
+        // const data = {
+        //     ingredients: this.state.ingredients,
+        //     price: this.state.totalPrice,
+        //     customer: {
+        //         name: 'Ibtisam ul Haq',
+        //         address: {
+        //             street: 2,
+        //             house_no: 111,
+        //             block: 'B',
+        //             society: 'NFC'
+        //         },
+        //         email: 'iibtisam@gmail.com',
+        //     },
+        //     deliveryMethod: 'fastest'
+        // };
+        //
+        // axios.post('/orders.json', data).then(response => {
+        //     this.setState({
+        //         purchasing: false,
+        //         loading: false
+        //     });
+        // }).catch(error => {
             this.setState({
                 purchasing: false,
                 loading: false
             });
-        }).catch(error => {
-            this.setState({
-                purchasing: false,
-                loading: false
-            });
-        })
+        // })
     };
 
     componentDidMount() {
