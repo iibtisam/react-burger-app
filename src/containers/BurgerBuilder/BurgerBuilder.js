@@ -6,9 +6,8 @@ import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
-import * as actionTypes from '../../store/actions';
+import * as burgerBuilderActions from '../../store/actions/index';
 import {connect} from 'react-redux';
-
 
 import axios from '../../axios-orders';
 
@@ -16,9 +15,7 @@ import axios from '../../axios-orders';
 class BurgerBuilder extends Component {
 
     state = {
-        purchasable: false,
-        purchasing: false,
-        loading: false
+        purchasable: false
     };
 
     updatePurchaseState = (ingredients) => {
@@ -46,6 +43,8 @@ class BurgerBuilder extends Component {
         this.setState({purchasing: false});
     };
     purchaseContinueHandler = () => {
+        console.log('calling');
+        this.props.onInitPurchase();
         this.props.history.push('/checkout');
     }
 
@@ -96,13 +95,14 @@ class BurgerBuilder extends Component {
     };*/
 
     componentDidMount() {
+        this.props.onInitIngredients();
         // axios.get('https://react-burger-app-ibtisam.firebaseio.com/ingredients.json').then(response => {
         //     console.log(response);
         //     this.setState({
         //         ingredients: response.data
         //     })
         // }).catch(error => {
-        //
+        //     console.log('error', error);
         // });
     }
 
@@ -114,7 +114,8 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] === 0;
         }
         let orderSummary = null;
-        let burger = <Spinner/>;
+        let burger = this.props.error ? <p>Ingredients can't be loaded</p> : <Spinner/>;
+        console.log(this.props.ings);
         if (this.props.ings) {
             burger = (
                 <Aux>
@@ -135,9 +136,6 @@ class BurgerBuilder extends Component {
                 purchaseContinued={this.purchaseContinueHandler}
                 price={this.props.price}
             />);
-            if (this.state.loading) {
-                orderSummary = <Spinner/>;
-            }
 
         }
 
@@ -154,22 +152,19 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    onIngredientAdded: (ingName) => dispatch({
-        type: actionTypes.ADD_INGREDIENT,
-        ingredientName: ingName
-    }),
-    onIngredientRemoved: (ingName) => dispatch({
-        type: actionTypes.REMOVE_INGREDIENT,
-        ingredientName: ingName
-    })
-  };
+    return {
+        onIngredientAdded: (ingName) => dispatch(burgerBuilderActions.addIngredient(ingName)),
+        onIngredientRemoved: (ingName) => dispatch(burgerBuilderActions.removeIngredient(ingName)),
+        onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
+        onInitPurchase: () => dispatch(burgerBuilderActions.purchaseInit())
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
